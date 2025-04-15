@@ -1,0 +1,4 @@
+// Test.xcconfig
+BASE_URL = https://test.api.pumpin.com
+APP_ENVIRONMENT = TEST
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) TEST

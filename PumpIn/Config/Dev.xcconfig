@@ -1,0 +1,4 @@
+// Dev.xcconfig
+BASE_URL = https://dev.api.pumpin.com
+APP_ENVIRONMENT = DEV
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEBUG DEV

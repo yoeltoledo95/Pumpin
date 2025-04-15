@@ -1,0 +1,4 @@
+// Prod.xcconfig
+BASE_URL = https://api.pumpin.com
+APP_ENVIRONMENT = PROD
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PROD
