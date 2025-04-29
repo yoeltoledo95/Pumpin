@@ -55,10 +55,27 @@ class WorkoutSessionViewModel: ObservableObject {
         self.workout = workout
         self.workoutHistoryService = workoutHistoryService
         self.currentSet = ExerciseSet(targetReps: 0, targetWeight: 0, restTime: 0)
-        setupNextExercise()
+        setupFirstExercise()
     }
     
     // MARK: - Exercise Management
+    
+    /// Sets up the first exercise without starting rest timer
+    private func setupFirstExercise() {
+        guard currentExerciseIndex < workout.exercises.count else {
+            currentExercise = nil
+            return
+        }
+        
+        let exercise = workout.exercises[currentExerciseIndex]
+        currentExercise = exercise
+        currentSetIndex = 0
+        
+        if let firstSet = exercise.sets.first {
+            currentSet = firstSet
+            // Don't start rest timer for first set
+        }
+    }
     
     /// Sets up the next exercise in the workout sequence
     private func setupNextExercise() {
@@ -83,7 +100,11 @@ class WorkoutSessionViewModel: ObservableObject {
         }
         
         currentSet = exercise.sets[currentSetIndex]
-        startRestTimer()
+        
+        // Only start rest timer if this isn't the first set of the first exercise
+        if !(currentExerciseIndex == 0 && currentSetIndex == 0) {
+            startRestTimer()
+        }
     }
     
     // MARK: - Rest Timer Management
