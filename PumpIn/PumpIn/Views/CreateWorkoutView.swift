@@ -3,9 +3,29 @@ import SwiftUI
 struct CreateWorkoutView: View {
     @Binding var isPresented: Bool
     let onSave: (String, [WorkoutExercise]) -> Void
+    var initialWorkoutName: String = ""
+    var initialExercises: [ExerciseFormData] = [ExerciseFormData()]
+    var title: String = "Create New Workout"
+    var buttonLabel: String = "Create Workout"
     
-    @State private var workoutName = ""
-    @State private var exercises: [ExerciseFormData] = [ExerciseFormData()]
+    @State private var workoutName: String
+    @State private var exercises: [ExerciseFormData]
+    
+    init(isPresented: Binding<Bool>,
+         onSave: @escaping (String, [WorkoutExercise]) -> Void,
+         initialWorkoutName: String = "",
+         initialExercises: [ExerciseFormData] = [ExerciseFormData()],
+         title: String = "Create New Workout",
+         buttonLabel: String = "Create Workout") {
+        self._isPresented = isPresented
+        self.onSave = onSave
+        self.initialWorkoutName = initialWorkoutName
+        self.initialExercises = initialExercises
+        self.title = title
+        self.buttonLabel = buttonLabel
+        _workoutName = State(initialValue: initialWorkoutName)
+        _exercises = State(initialValue: initialExercises)
+    }
     
     var body: some View {
         NavigationView {
@@ -62,7 +82,7 @@ struct CreateWorkoutView: View {
                 .padding(.vertical, 24)
             }
             .background(Color(hex: "#F8FAFC"))
-            .navigationTitle("Create New Workout")
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -73,7 +93,7 @@ struct CreateWorkoutView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Create Workout") {
+                    Button(buttonLabel) {
                         let workoutExercises = exercises.map { data in
                             var exercise = WorkoutExercise(name: data.name)
                             for _ in 0..<(Int(data.sets) ?? 1) {
@@ -163,7 +183,7 @@ struct ExerciseFormView: View {
                 HStack(spacing: 16) {
                     // Weight
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Weight (lbs)")
+                        Text("Weight (kg)")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(Color(hex: "#475569"))
                         
@@ -194,14 +214,16 @@ struct ExerciseFormView: View {
 }
 
 struct CustomTextFieldStyle: TextFieldStyle {
+    @Environment(\.theme) var theme
+    
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .padding()
-            .background(Color.white)
+            .background(theme.cardBackground)
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color(hex: "#E2E8F0"), lineWidth: 1)
+                    .stroke(theme.border, lineWidth: 1)
             )
     }
 }

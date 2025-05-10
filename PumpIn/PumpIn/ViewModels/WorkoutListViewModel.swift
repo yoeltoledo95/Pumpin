@@ -67,4 +67,10 @@ class WorkoutListViewModel: ObservableObject {
     func setSearchText(_ text: String) {
         searchText = text
     }
+    
+    func updateWorkout(_ updated: Workout) {
+        if let idx = workouts.firstIndex(where: { $0.id == updated.id }) {
+            workouts[idx] = updated
+        }
+    }
 } 

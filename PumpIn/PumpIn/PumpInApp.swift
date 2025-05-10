@@ -17,6 +17,7 @@ struct PumpInApp: App {
     var body: some Scene {
         WindowGroup {
             WorkoutListView()
+                .withTheme()
         }
     }
 }

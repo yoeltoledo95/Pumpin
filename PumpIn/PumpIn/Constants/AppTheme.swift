@@ -2,11 +2,35 @@ import SwiftUI
 
 enum AppTheme {
     enum Colors {
-        static let primary = Color(hex: "1B254B")
-        static let accent = Color(hex: "4E7FFF")
-        static let background = Color(hex: "111827")
-        static let cardBackground = Color(hex: "1F2937")
-        static let accentLight = Color(hex: "374151")
+        // Light Mode Colors
+        static let light = AppColorScheme(
+            primary: Color(hex: "1E2A38"),
+            secondary: Color(hex: "475569"),
+            background: Color(hex: "F8FAFC"),
+            cardBackground: Color.white,
+            accent: Color(hex: "F97316"),
+            success: Color(hex: "22C55E"),
+            border: Color(hex: "E2E8F0"),
+            textPrimary: Color(hex: "1E2A38"),
+            textSecondary: Color(hex: "64748B")
+        )
+        
+        // Dark Mode Colors
+        static let dark = AppColorScheme(
+            primary: Color(hex: "E2E8F0"),
+            secondary: Color(hex: "94A3B8"),
+            background: Color(hex: "0F172A"),
+            cardBackground: Color(hex: "1E293B"),
+            accent: Color(hex: "FB923C"),
+            success: Color(hex: "4ADE80"),
+            border: Color(hex: "334155"),
+            textPrimary: Color(hex: "F1F5F9"),
+            textSecondary: Color(hex: "94A3B8")
+        )
+        
+        static func current(_ colorScheme: SwiftUI.ColorScheme?) -> AppColorScheme {
+            colorScheme == .dark ? dark : light
+        }
     }
     
     enum Fonts {
@@ -27,6 +51,18 @@ enum AppTheme {
         static let medium: CGFloat = 8
         static let large: CGFloat = 12
     }
+}
+
+struct AppColorScheme {
+    let primary: Color
+    let secondary: Color
+    let background: Color
+    let cardBackground: Color
+    let accent: Color
+    let success: Color
+    let border: Color
+    let textPrimary: Color
+    let textSecondary: Color
 }
 
 extension Color {
