@@ -55,7 +55,7 @@ struct WorkoutSummaryView: View {
                                         
                                         HStack(spacing: 8) {
                                             Image(systemName: "scalemass.fill")
-                                            Text("\(Int(set.actualWeight))/\(Int(set.targetWeight)) lbs")
+                                            Text("\(Int(set.actualWeight))/\(Int(set.targetWeight)) kg")
                                         }
                                         .font(.system(size: 14))
                                         .foregroundColor(Color(hex: "#64748B"))

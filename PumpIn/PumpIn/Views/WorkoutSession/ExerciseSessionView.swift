@@ -36,7 +36,7 @@ struct ExerciseSessionView: View {
                     Text("Target Weight")
                         .font(.system(size: 14))
                         .foregroundColor(Color(hex: "#64748B"))
-                    Text("\(Int(currentSet.targetWeight)) lbs")
+                    Text("\(Int(currentSet.targetWeight)) kg")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(Color(hex: "#1E2A38"))
                 }

@@ -2,8 +2,8 @@ import SwiftUI
 
 struct WorkoutDetailView: View {
     @StateObject private var viewModel: WorkoutDetailViewModel
-    @State private var showingAddExercise = false
     @State private var showingStartWorkout = false
+    @State private var showingEditWorkout = false
     @Environment(\.dismiss) private var dismiss
     
     init(workout: Workout) {
@@ -38,27 +38,8 @@ struct WorkoutDetailView: View {
                 // Exercises List
                 VStack(spacing: 16) {
                     ForEach(viewModel.workout.exercises) { exercise in
-                        ExerciseDetailView(exercise: exercise) {
-                            viewModel.deleteExercise(exercise)
-                        }
+                        ExerciseDetailView(exercise: exercise)
                     }
-                }
-                .padding(.horizontal, 24)
-                
-                // Add Exercise Button
-                Button(action: { showingAddExercise = true }) {
-                    HStack {
-                        Image(systemName: "plus")
-                        Text("Add Exercise")
-                    }
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(Color(hex: "#F97316"))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color(hex: "#F97316"), style: StrokeStyle(lineWidth: 1, dash: [5]))
-                    )
                 }
                 .padding(.horizontal, 24)
                 
@@ -85,24 +66,28 @@ struct WorkoutDetailView: View {
         .background(Color(hex: "#F8FAFC"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { showingEditWorkout = true }) {
                     HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                        Text("Back")
+                        Image(systemName: "pencil")
+                        Text("Edit Workout")
                     }
-                    .foregroundColor(Color(hex: "#475569"))
                 }
             }
         }
-        .sheet(isPresented: $showingAddExercise) {
-            AddExerciseView(isPresented: $showingAddExercise) { name, sets, reps, weight, restTime in
-                var exercise = WorkoutExercise(name: name)
-                for _ in 0..<sets {
-                    exercise.addSet(targetReps: reps, targetWeight: weight, restTime: restTime)
-                }
-                viewModel.addExercise(name: name)
-            }
+        .sheet(isPresented: $showingEditWorkout) {
+            CreateWorkoutView(
+                isPresented: $showingEditWorkout,
+                onSave: { name, exercises in
+                    viewModel.workout.name = name
+                    viewModel.workout.exercises = exercises
+                    // Optionally update backend here
+                },
+                initialWorkoutName: viewModel.workout.name,
+                initialExercises: viewModel.workout.exercises.map { ex in ExerciseFormData(name: ex.name, sets: "\(ex.sets.count)", repsPerSet: ex.sets.first.map { "\($0.targetReps)" } ?? "", weight: ex.sets.first.map { "\($0.targetWeight)" } ?? "", restTime: ex.sets.first.map { "\($0.restTime)" } ?? "") },
+                title: "Edit Workout",
+                buttonLabel: "Save Changes"
+            )
         }
         .fullScreenCover(isPresented: $showingStartWorkout) {
             WorkoutSessionView(workout: viewModel.workout)
@@ -112,7 +97,6 @@ struct WorkoutDetailView: View {
 
 struct ExerciseDetailView: View {
     let exercise: WorkoutExercise
-    let onDelete: () -> Void
     
     var body: some View {
         VStack(spacing: 16) {
@@ -121,13 +105,7 @@ struct ExerciseDetailView: View {
                 Text(exercise.name)
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(Color(hex: "#1E2A38"))
-                
                 Spacer()
-                
-                Button(action: onDelete) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.red)
-                }
             }
             
             // Exercise Stats
@@ -139,7 +117,7 @@ struct ExerciseDetailView: View {
                 
                 HStack(spacing: 8) {
                     Image(systemName: "scalemass.fill")
-                    Text("\(Int(exercise.sets.first?.targetWeight ?? 0)) lbs")
+                    Text("\(Int(exercise.sets.first?.targetWeight ?? 0)) kg")
                 }
                 
                 HStack(spacing: 8) {
@@ -207,7 +185,7 @@ struct AddExerciseView: View {
                     // Weight and Rest Time
                     HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Weight (lbs)")
+                            Text("Weight (kg)")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(Color(hex: "#475569"))
                             
